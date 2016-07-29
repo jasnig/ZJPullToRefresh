@@ -142,4 +142,4 @@ let gifAnimatorHeader = GifAnimator.gifAnimatorWithHeight(100.0)
 
 ## License
 
-ScrollPageView is released under the MIT license. See LICENSE for details.
+ZJRefreshView is released under the MIT license. See LICENSE for details.
