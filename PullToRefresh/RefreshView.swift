@@ -106,7 +106,7 @@ public class RefreshView: UIView {
             
             if refreshViewState != oldValue {
                 if refreshViewState == .loading {
-                    print(refreshAnimator.lastRefreshTimeKey)
+//                    print(refreshAnimator.lastRefreshTimeKey)
                     refreshAnimator.lastRefreshTime = NSDate()
                     
                 }
@@ -223,7 +223,7 @@ extension RefreshView {
                     validSelf.refreshHandler()
             })
             
-            })
+        })
         
     }
     
@@ -232,7 +232,7 @@ extension RefreshView {
         if !isRefreshing { return }
         isRefreshing = false
         isAnimating = true
-        print("endAnimation ---    \(scrollViewOriginalValue.contentInset.top)")
+//        print("endAnimation ---    \(scrollViewOriginalValue.contentInset.top)")
 
         dispatch_async(dispatch_get_main_queue(), {[weak self] in
             guard let validSelf = self else { return }
@@ -249,7 +249,7 @@ extension RefreshView {
                     
                     // refresh end
                     validScrollView.bounces = validSelf.scrollViewOriginalValue.bounces
-                    print("endAnimation ---    \(self!.scrollView?.contentInset.top)")
+//                    print("endAnimation ---    \(self!.scrollView?.contentInset.top)")
                     validSelf.isAnimating = false
                     validSelf.refreshAnimator.refreshDidChangeProgress(validSelf, progress: 1.0, refreshViewType: validSelf.refreshViewType)
                     validSelf.refreshAnimator.refreshDidEnd(validSelf, refreshViewType: validSelf.refreshViewType)
@@ -344,7 +344,7 @@ extension RefreshView {
             
             insetsTop = min(scrollViewOriginalValue.contentInset.top + self.bounds.height, insetsTop)
             scrollView.contentInset.top = insetsTop
-            print("--------******   \(scrollView.contentInset.top)")
+//            print("--------******   \(scrollView.contentInset.top)")
             return
         }
         /// 不在刷新状态的时候都随时记录原始的contentInset
@@ -372,7 +372,7 @@ extension RefreshView {
     
     private func adjustRefreshViewWithProgress(progress: CGFloat, scrollView: UIScrollView) {
         
-        print(progress)
+//        print(progress)
         
         if scrollView.tracking {
             
