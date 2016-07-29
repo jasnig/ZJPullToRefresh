@@ -99,7 +99,7 @@ class TestController: UIViewController {
     }
     func example4() {
         
-        let gifAnimatorHeader = GifAnimator.gifAnimator()
+        let gifAnimatorHeader = GifAnimator.gifAnimatorWithHeight(100.0)
         gifAnimatorHeader.lastRefreshTimeKey = "exampleHeader4"
         
         /// 为不同的state设置不同的图片
@@ -109,16 +109,16 @@ class TestController: UIViewController {
         gifAnimatorHeader.setupImagesForRefreshstate { (refreshState) -> (images: [UIImage], duration: Double)? in
             if refreshState == .loading {
                 var images = [UIImage]()
-                for index in 1...3 {
-                    let image = UIImage(named: "dropdown_loading_0\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
-                return (images, 0.25)
+                return (images, 1.0)
             }
             else if  refreshState == .pullToRefresh {
                 var images = [UIImage]()
-                for index in 1...60 {
-                    let image = UIImage(named: "dropdown_anim__000\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
                 return (images, 0.25)
@@ -126,7 +126,7 @@ class TestController: UIViewController {
             return nil
         }
         
-        let gifAnimatorFooter = GifAnimator.gifAnimator()
+        let gifAnimatorFooter = GifAnimator.gifAnimatorWithHeight(100.0)
         gifAnimatorFooter.lastRefreshTimeKey = "exampleFooter4"
         
         /// 为不同的state设置不同的图片
@@ -136,16 +136,16 @@ class TestController: UIViewController {
         gifAnimatorFooter.setupImagesForRefreshstate { (refreshState) -> (images: [UIImage], duration: Double)? in
             if refreshState == .loading {
                 var images = [UIImage]()
-                for index in 1...3 {
-                    let image = UIImage(named: "dropdown_loading_0\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
-                return (images, 0.25)
+                return (images, 1.0)
             }
             else if  refreshState == .pullToRefresh {
                 var images = [UIImage]()
-                for index in 1...60 {
-                    let image = UIImage(named: "dropdown_anim__000\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
                 return (images, 0.25)
@@ -156,7 +156,7 @@ class TestController: UIViewController {
         addHeader(gifAnimatorHeader, footer: gifAnimatorFooter)
     }
     func example5() {
-        let gifAnimatorHeader = GifAnimator.gifAnimator()
+        let gifAnimatorHeader = GifAnimator.gifAnimatorWithHeight(100.0)
         gifAnimatorHeader.lastRefreshTimeKey = "exampleHeader5"
         gifAnimatorHeader.descriptionLabel.hidden = true
         gifAnimatorHeader.lastTimeLabel.hidden = true
@@ -168,16 +168,16 @@ class TestController: UIViewController {
         gifAnimatorHeader.setupImagesForRefreshstate { (refreshState) -> (images: [UIImage], duration: Double)? in
             if refreshState == .loading {
                 var images = [UIImage]()
-                for index in 1...3 {
-                    let image = UIImage(named: "dropdown_loading_0\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
-                return (images, 0.25)
+                return (images, 1.0)
             }
             else if  refreshState == .pullToRefresh {
                 var images = [UIImage]()
-                for index in 1...60 {
-                    let image = UIImage(named: "dropdown_anim__000\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
                 return (images, 0.25)
@@ -185,7 +185,7 @@ class TestController: UIViewController {
             return nil
         }
         
-        let gifAnimatorFooter = GifAnimator.gifAnimator()
+        let gifAnimatorFooter = GifAnimator.gifAnimatorWithHeight(100.0)
         gifAnimatorFooter.lastRefreshTimeKey = "exampleFooter5"
         /// 为不同的state设置不同的图片
         /// 闭包需要返回一个元组: 图片数组和gif动画每一帧的执行时间
@@ -194,16 +194,16 @@ class TestController: UIViewController {
         gifAnimatorFooter.setupImagesForRefreshstate { (refreshState) -> (images: [UIImage], duration: Double)? in
             if refreshState == .loading {
                 var images = [UIImage]()
-                for index in 1...3 {
-                    let image = UIImage(named: "dropdown_loading_0\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
-                return (images, 0.25)
+                return (images, 1.0)
             }
             else if  refreshState == .pullToRefresh {
                 var images = [UIImage]()
-                for index in 1...60 {
-                    let image = UIImage(named: "dropdown_anim__000\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
                 return (images, 0.25)
@@ -215,7 +215,7 @@ class TestController: UIViewController {
 
     }
     func example6() {
-        let gifAnimatorHeader = GifAnimator.gifAnimator()
+        let gifAnimatorHeader = GifAnimator.gifAnimatorWithHeight(100.0)
         gifAnimatorHeader.lastRefreshTimeKey = "exampleHeader6"
         
         
@@ -244,16 +244,16 @@ class TestController: UIViewController {
         gifAnimatorHeader.setupImagesForRefreshstate { (refreshState) -> (images: [UIImage], duration: Double)? in
             if refreshState == .loading {
                 var images = [UIImage]()
-                for index in 1...3 {
-                    let image = UIImage(named: "dropdown_loading_0\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
-                return (images, 0.25)
+                return (images, 1.0)
             }
             else if  refreshState == .pullToRefresh {
                 var images = [UIImage]()
-                for index in 1...60 {
-                    let image = UIImage(named: "dropdown_anim__000\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
                 return (images, 0.25)
@@ -261,10 +261,10 @@ class TestController: UIViewController {
             return nil
         }
         
-        let gifAnimatorFooter = GifAnimator.gifAnimator()
+        let gifAnimatorFooter = GifAnimator.gifAnimatorWithHeight(100.0)
         gifAnimatorFooter.lastRefreshTimeKey = "exampleFooter5"
         
-        gifAnimatorHeader.setupDescriptionForState { (refreshState,refreshType) -> String in
+        gifAnimatorFooter.setupDescriptionForState { (refreshState,refreshType) -> String in
             switch refreshState {
             case .loading:
                 return "努力加载中"
@@ -289,16 +289,16 @@ class TestController: UIViewController {
         gifAnimatorFooter.setupImagesForRefreshstate { (refreshState) -> (images: [UIImage], duration: Double)? in
             if refreshState == .loading {
                 var images = [UIImage]()
-                for index in 1...3 {
-                    let image = UIImage(named: "dropdown_loading_0\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
-                return (images, 0.25)
+                return (images, 1.0)
             }
             else if  refreshState == .pullToRefresh {
                 var images = [UIImage]()
-                for index in 1...60 {
-                    let image = UIImage(named: "dropdown_anim__000\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
                 return (images, 0.25)

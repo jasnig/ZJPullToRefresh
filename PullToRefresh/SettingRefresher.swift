@@ -41,27 +41,26 @@ class TestNormal {
 class TestGif {
     
     class func gif() -> GifAnimator {
-        let gif = GifAnimator.gifAnimator()
+        let gif = GifAnimator.gifAnimatorWithHeight(100.0)
         gif.lastRefreshTimeKey = "DemoKey2"
 
         /// 为不同的state设置不同的图片
         /// 闭包需要返回一个元组: 图片数组和gif动画每一帧的执行时间
         /// 一般需要设置loading状态的图片(必须), 作为加载的gif
         /// 和pullToRefresh状态的图片数组(可选择设置), 作为拖拽时的加载动画
-        gif.setupImagesForRefreshstate {(refreshState) -> (images:[UIImage], duration:Double)? in
-            
-            if refreshState == .loading {// 设置加载过程中的动画图片
+        gif.setupImagesForRefreshstate { (refreshState) -> (images: [UIImage], duration: Double)? in
+            if refreshState == .loading {
                 var images = [UIImage]()
-                for index in 1...3 {
-                    let image = UIImage(named: "dropdown_loading_0\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
-                return (images, 0.25)
+                return (images, 1.0)
             }
-            else if  refreshState == .pullToRefresh {// 设置下拉过程中的动画图片
+            else if  refreshState == .pullToRefresh {
                 var images = [UIImage]()
-                for index in 1...60 {
-                    let image = UIImage(named: "dropdown_anim__000\(index)")!
+                for index in 1...47 {
+                    let image = UIImage(named: "loading\(index)")!
                     images.append(image)
                 }
                 return (images, 0.25)

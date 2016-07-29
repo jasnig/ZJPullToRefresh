@@ -45,7 +45,7 @@ class GifAnimator: UIView {
     private lazy var gifImageView: UIImageView = {
         let gifImageView = UIImageView()
         gifImageView.clipsToBounds = true
-        
+        gifImageView.contentMode = .ScaleAspectFit
         return gifImageView
     }()
     /// 缓存图片
@@ -103,8 +103,8 @@ class GifAnimator: UIView {
         setupLastTimeClosure = closure
     }
     ///
-    class func gifAnimator() -> GifAnimator {
-        let gif = GifAnimator(frame: CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: 50.0))
+    class func gifAnimatorWithHeight(height: CGFloat) -> GifAnimator {
+        let gif = GifAnimator(frame: CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.width, height: height))
         return gif
     }
     // MARK: - life cycle
@@ -124,35 +124,25 @@ class GifAnimator: UIView {
         super.layoutSubviews()
         gifImageView.frame = bounds
         /// setting height and width
-        descriptionLabel.sizeToFit()
-        lastTimeLabel.sizeToFit()
-        /// 由图片设置刷新控件的高度
-        if gifImageView.image?.size.height > bounds.height {
-            bounds.size.height = gifImageView.image!.size.height
-        }
         
-        if descriptionLabel.hidden && lastTimeLabel.hidden {
-            gifImageView.contentMode = .Center
-        }
-        else {
-            gifImageView.frame.origin.x = 15.0
+        if !descriptionLabel.hidden {
+            if lastTimeLabel.hidden {
+                descriptionLabel.sizeToFit()
+                descriptionLabel.center = center
+                gifImageView.frame.size.width = descriptionLabel.frame.minX - imageMagin
 
-            /// y
-            if lastTimeLabel.hidden {// 居中
-                descriptionLabel.center.y = center.y
             }
             else {
+                descriptionLabel.sizeToFit()
+                lastTimeLabel.sizeToFit()
                 descriptionLabel.frame.origin.y = bounds.height/2 - descriptionLabel.bounds.height
+                lastTimeLabel.frame.origin.y = descriptionLabel.frame.maxY + 8.0
+                descriptionLabel.center.x = center.x
+                lastTimeLabel.center.x = center.x
+
+                gifImageView.frame.size.width = min(descriptionLabel.frame.minX, lastTimeLabel.frame.minX) - imageMagin
+
             }
-            /// imageView
-            gifImageView.contentMode = .Right
-            gifImageView.frame.size.width = min(descriptionLabel.frame.minX, lastTimeLabel.frame.minX) - imageMagin - 15.0
-            
-            /// y
-            lastTimeLabel.frame.origin.y = bounds.height - lastTimeLabel.bounds.height
-            /// x
-            descriptionLabel.center.x = center.x
-            lastTimeLabel.center.x = center.x
         }
         
     }

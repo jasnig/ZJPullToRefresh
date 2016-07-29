@@ -128,7 +128,8 @@ public class RefreshView: UIView {
     private var isGestureBegin = false
     private var offPartHeight = CGFloat(0)
     private var beginAnimatingOffsetY: CGFloat = 0
-
+    /// 标注结束的动画是否执行完成
+    private var isAnimating = false
     /// store it to reset scrollView' after animating
     private var scrollViewOriginalValue:(bounces: Bool, contentInset: UIEdgeInsets, contentOffset: CGPoint) = (false, UIEdgeInsets(), CGPoint())
     /// superView
@@ -229,7 +230,10 @@ extension RefreshView {
     private func stopAnimation() {
         guard let validScrollView = scrollView else { return }
         if !isRefreshing { return }
-        
+        isRefreshing = false
+        isAnimating = true
+        print("endAnimation ---    \(scrollViewOriginalValue.contentInset.top)")
+
         dispatch_async(dispatch_get_main_queue(), {[weak self] in
             guard let validSelf = self else { return }
             
@@ -245,7 +249,8 @@ extension RefreshView {
                     
                     // refresh end
                     validScrollView.bounces = validSelf.scrollViewOriginalValue.bounces
-                    validSelf.isRefreshing = false
+                    print("endAnimation ---    \(self!.scrollView?.contentInset.top)")
+                    validSelf.isAnimating = false
                     validSelf.refreshAnimator.refreshDidChangeProgress(validSelf, progress: 1.0, refreshViewType: validSelf.refreshViewType)
                     validSelf.refreshAnimator.refreshDidEnd(validSelf, refreshViewType: validSelf.refreshViewType)
                     validSelf.refreshViewState = .normal
@@ -309,8 +314,8 @@ extension RefreshView {
         if scrollView.panGestureRecognizer.state == .Began {// 手势拖拽才能进入下拉状态
             isGestureBegin = true
             /// 超出屏幕的内容高度
-            offPartHeight = scrollView.contentSize.height - scrollView.bounds.height
-            beginAnimatingOffsetY = offPartHeight>=0 ? offPartHeight : -scrollViewOriginalValue.contentInset.top
+            offPartHeight = frame.origin.y - scrollView.bounds.height
+            beginAnimatingOffsetY = offPartHeight>0 ? offPartHeight : -scrollViewOriginalValue.contentInset.top
             return
         }
         
@@ -339,11 +344,12 @@ extension RefreshView {
             
             insetsTop = min(scrollViewOriginalValue.contentInset.top + self.bounds.height, insetsTop)
             scrollView.contentInset.top = insetsTop
-            
+            print("--------******   \(scrollView.contentInset.top)")
             return
         }
         /// 不在刷新状态的时候都随时记录原始的contentInset
         /// 刷新状态的时候不能记录为原始的
+        if isAnimating {/**stop动画还未执行完成*/ return }
         scrollViewOriginalValue.contentInset = scrollView.contentInset
         
         if scrollView.panGestureRecognizer.state == .Began {// 手势拖拽才能进入下拉状态
