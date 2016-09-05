@@ -136,8 +136,8 @@ let gifAnimatorHeader = GifAnimator.gifAnimatorWithHeight(100.0)
 
 
 
-###如果您在使用过程中遇到问题, 请联系我
-####QQ群:573645936 
+
+
 ####如果对您有帮助,请随手给个star 
 
 ## License
