@@ -138,8 +138,9 @@ let gifAnimatorHeader = GifAnimator.gifAnimatorWithHeight(100.0)
 
 
 
-####如果对您有帮助,请随手给个star 
 
+####如果对你有帮助,请随手给个star 
+####如果你在使用中遇到问题: 可以联系我QQ: 854136959
 ## License
 
 ZJRefreshView is released under the MIT license. See LICENSE for details.
