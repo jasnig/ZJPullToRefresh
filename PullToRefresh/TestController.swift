@@ -19,8 +19,9 @@ class TestController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+//        tableView.contentInset = UIEdgeInsetsMake(60, 0, 0, 0)
         view.addSubview(tableView)
-        
+//        automaticallyAdjustsScrollViewInsets = false
         tableView.tableFooterView = UIView()
         
         tableView.sectionHeaderHeight = 100.0
@@ -45,6 +46,8 @@ class TestController: UIViewController {
         }
 
     }
+    
+
     
     func example1() {
         let normalHeader = NormalAnimator.normalAnimator()
@@ -359,6 +362,8 @@ class TestController: UIViewController {
     }
     
     func addHeader<Animator where Animator: UIView, Animator: RefreshViewDelegate>(header: Animator, footer: Animator) {
+        
+
         tableView.zj_addRefreshHeader(header, refreshHandler: {[weak self] in
             /// 多线程中不要使用 [unowned self]
             /// 注意这里的gcd是为了模拟网络加载的过程, 在实际的使用中, 不需要这段gcd代码, 直接在这里进行网络请求, 在请求完毕后, 调用分类方法, 结束刷新

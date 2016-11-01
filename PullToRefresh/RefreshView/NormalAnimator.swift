@@ -68,6 +68,7 @@ public class NormalAnimator: UIView {
 
 extension NormalAnimator: RefreshViewDelegate {
     
+    
     public func refreshViewDidPrepare(refreshView: RefreshView, refreshType: RefreshViewType) {
         if refreshType == .header {
         } else {
@@ -77,11 +78,12 @@ extension NormalAnimator: RefreshViewDelegate {
         setupLastTime()
         
     }
-    
+    // 开始刷新
     public func refreshDidBegin(refreshView: RefreshView, refreshViewType: RefreshViewType) {
         indicatorView.hidden = false
         indicatorView.startAnimating()
     }
+    // 刷新完成
     public func refreshDidEnd(refreshView: RefreshView, refreshViewType: RefreshViewType) {
         indicatorView.stopAnimating()
     }
@@ -89,9 +91,9 @@ extension NormalAnimator: RefreshViewDelegate {
         //        print(progress)
         
     }
-    
+    // 刷新状态发生改变 --- 可以更改提示文字...
     public func refreshDidChangeState(refreshView: RefreshView, fromState: RefreshViewState, toState: RefreshViewState, refreshViewType: RefreshViewType) {
-        print(toState)
+//        print(toState)
         
         setupDescriptionForState(toState, type: refreshViewType)
         switch toState {

@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "0BFA678FBA2F2F2D453161F3F06955583A42F6C4",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "F3FD09F70E1C35541C53EF1A18284503A6285DE7" : 0,
+    "0BFA678FBA2F2F2D453161F3F06955583A42F6C4" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "0BEFB952-0163-4F1E-A0A9-EA2ADA50875D",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "F3FD09F70E1C35541C53EF1A18284503A6285DE7" : "",
+    "0BFA678FBA2F2F2D453161F3F06955583A42F6C4" : "PullToRefresh\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "PullToRefresh",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "PullToRefresh.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/jasnig\/ZJRefreshView.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0BFA678FBA2F2F2D453161F3F06955583A42F6C4"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/git.coding.net\/ZeroJ\/Book.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F3FD09F70E1C35541C53EF1A18284503A6285DE7"
+    }
+  ]
+}

@@ -80,7 +80,6 @@ public class RefreshView: UIView {
         static let ScrollViewContentSizePath = "contentSize"
         static let commonRefreshTimeKey = "ZJCommonRefreshTimeKey"
         static let LastRefreshTimeKey = NSProcessInfo().globallyUniqueString
-        
     }
     ///
     typealias RefreshHandler = Void -> Void
@@ -89,8 +88,10 @@ public class RefreshView: UIView {
         didSet {
             if canBegin == oldValue { return }
             if canBegin {
+                // 开始
                 startAnimation()
             } else {
+                // 结束
                 stopAnimation()
             }
         }
@@ -106,7 +107,6 @@ public class RefreshView: UIView {
             
             if refreshViewState != oldValue {
                 if refreshViewState == .loading {
-//                    print(refreshAnimator.lastRefreshTimeKey)
                     refreshAnimator.lastRefreshTime = NSDate()
                     
                 }
@@ -126,12 +126,13 @@ public class RefreshView: UIView {
     private var isRefreshing = false
     /// to distinguish if dragging begins
     private var isGestureBegin = false
-    private var offPartHeight = CGFloat(0)
+    /// save scrollView's contentOffsetY when the footer should appear
     private var beginAnimatingOffsetY: CGFloat = 0
+    private var insetTopDelta: CGFloat = 0
     /// 标注结束的动画是否执行完成
     private var isAnimating = false
     /// store it to reset scrollView' after animating
-    private var scrollViewOriginalValue:(bounces: Bool, contentInset: UIEdgeInsets, contentOffset: CGPoint) = (false, UIEdgeInsets(), CGPoint())
+    private var scrollViewOriginalValue:(bounces: Bool, contentInsetTop: CGFloat, contentInsetBottom: CGFloat, contentOffset: CGPoint) = (false, 0.0, 0.0, CGPoint())
     /// superView
     private weak var scrollView: UIScrollView? {
         return self.superview as? UIScrollView
@@ -144,11 +145,12 @@ public class RefreshView: UIView {
         self.refreshAnimator = refreshAnimator
         self.refreshHandler = refreshHandler
         super.init(frame: frame)
+        // 添加刷新控件
         addSubview(refreshAnimator)
-        /// needed
+        /// needed 添加约束
         autoresizingMask = .FlexibleWidth
         addConstraint()
-        /// animator can prepare to do something
+        /// animator can prepare to do something 调用代理 准备的方法
         self.refreshAnimator.refreshViewDidPrepare(self, refreshType: self.refreshViewType)
         ///
         hidden = refreshAnimator.isAutomaticlyHidden
@@ -176,15 +178,24 @@ public class RefreshView: UIView {
     override public func willMoveToSuperview(newSuperview: UIView?) {
         super.willMoveToSuperview(newSuperview)
         
-        removeObserverOf(scrollView)
+        if newSuperview == nil {
+            // 移除kvo监听者
+            removeObserverOf(scrollView);
+        }
         
         if let newScrollView = newSuperview as? UIScrollView {
-            ///  can drag anytime
+            ///  can drag anytime 开启始终支持bounces
             newScrollView.alwaysBounceVertical = true
+            // 添加kvo监听者
             addObserverOf(newScrollView)
-            scrollViewOriginalValue = (newScrollView.bounces, newScrollView.contentInset, newScrollView.contentOffset)
+            // 记录scrollView初始的状态, 便于在执行完成之后恢复
+            scrollViewOriginalValue = (newScrollView.bounces, newScrollView.contentInset.top, newScrollView.contentInset.bottom, newScrollView.contentOffset)
+  
             if refreshViewType == .footer {// reset frame
                 self.frame.origin.y = newScrollView.contentSize.height
+            }
+            else {
+                self.frame.origin.y = -self.frame.size.height
             }
         }
     }
@@ -192,24 +203,22 @@ public class RefreshView: UIView {
 }
 
 extension RefreshView {
-    
     private func startAnimation() {
         guard let validScrollView = scrollView else { return }
         validScrollView.bounces = false
         isRefreshing = true
-        if hidden { hidden = false }
         /// may update UI
         dispatch_async(dispatch_get_main_queue(), {[weak self] in
             guard let validSelf = self else { return }
             
             UIView.animateWithDuration(0.25, animations: {
                 if validSelf.refreshViewType == .header {
-                    validScrollView.contentInset.top = validSelf.scrollViewOriginalValue.contentInset.top + validSelf.bounds.height
+                    validScrollView.contentInset.top = validSelf.scrollViewOriginalValue.contentInsetTop + validSelf.bounds.height
                 } else {
                     let offPartHeight = validScrollView.contentSize.height - validSelf.heightOfContentOnScreenOfScrollView(validScrollView)
                     /// contentSize改变的时候设置的self.y不同导致不同的结果
                     /// 所有内容高度>屏幕上显示的内容高度
-                    let notSureBottom = validSelf.scrollViewOriginalValue.contentInset.bottom + validSelf.bounds.height
+                    let notSureBottom = validSelf.scrollViewOriginalValue.contentInsetBottom + validSelf.bounds.height
                     validScrollView.contentInset.bottom = offPartHeight>=0 ? notSureBottom : notSureBottom - offPartHeight // 加上
                     
                 }
@@ -239,10 +248,9 @@ extension RefreshView {
             
             UIView.animateWithDuration(0.25, animations: {
                 if validSelf.refreshViewType == .header {
-                    validScrollView.contentInset.top = validSelf.scrollViewOriginalValue.contentInset.top
+                    validScrollView.contentInset.top += validSelf.insetTopDelta;
                 } else {
-                    
-                    validScrollView.contentInset.bottom = validSelf.scrollViewOriginalValue.contentInset.bottom
+                    validScrollView.contentInset.bottom = validSelf.scrollViewOriginalValue.contentInsetBottom
                 }
                 
                 }, completion: { (_) in
@@ -254,6 +262,7 @@ extension RefreshView {
                     validSelf.refreshAnimator.refreshDidChangeProgress(validSelf, progress: 1.0, refreshViewType: validSelf.refreshViewType)
                     validSelf.refreshAnimator.refreshDidEnd(validSelf, refreshViewType: validSelf.refreshViewType)
                     validSelf.refreshViewState = .normal
+                    validSelf.hidden = validSelf.refreshAnimator.isAutomaticlyHidden;
             })
             
         })
@@ -279,8 +288,8 @@ extension RefreshView {
                 
                 /// 设置刷新控件self的位置
                 let contentOnScreenHeight = heightOfContentOnScreenOfScrollView(validScrollView)
-                /// 添加在屏幕"外面"
-                
+                /// 添加在scrollView"外面"
+                // 当scrollView的内容总高度 < scrollView的高度的时候, 设置为contentOnScreenHeight
                 self.frame.origin.y = max(newSize.height, contentOnScreenHeight)
                 //                print("old--*\(oldSize.height)--------*\(newSize.height)")
                 
@@ -288,7 +297,7 @@ extension RefreshView {
             else if keyPath == ConstantValue.ScrollViewContentOffsetPath {
                 
                 if let validScrollView = scrollView where object as? UIScrollView == validScrollView {
-                    
+//                    print(validScrollView.contentInset.top);
                     if refreshViewType == .header {
                         adjustHeaderWhenScrollViewIsScrolling(validScrollView)
                     } else {
@@ -308,52 +317,59 @@ extension RefreshView {
     
     private func adjustFooterWhenScrollViewIsScrolling(scrollView: UIScrollView) {
         
-        if isRefreshing {/**正在刷新直接返回*/ return }
+        if isRefreshing || isAnimating {/**正在刷新直接返回*/ return }
         
-        scrollViewOriginalValue.contentInset = scrollView.contentInset
+        scrollViewOriginalValue.contentInsetBottom = scrollView.contentInset.bottom
         if scrollView.panGestureRecognizer.state == .Began {// 手势拖拽才能进入下拉状态
             isGestureBegin = true
-            /// 超出屏幕的内容高度
-            offPartHeight = frame.origin.y - scrollView.bounds.height
-            beginAnimatingOffsetY = offPartHeight>0 ? offPartHeight : -scrollViewOriginalValue.contentInset.top
+            /// 计算将出现的OffsetY
+            beginAnimatingOffsetY = frame.origin.y - scrollView.bounds.height
+
+            hidden = false
             return
         }
         
         if !isGestureBegin {/**没有拖拽直接返回*/ return }
         
-        // 已经进入拖拽状态, 进行相关操作
-
-//        print("\(offPartHeight) -----* \(beginAnimatingOffsetY) --- *\(scrollView.contentOffset.y)")
+        // 还未出现
         if scrollView.contentOffset.y < beginAnimatingOffsetY {/**底部视图(隐藏)并且还没到显示的临界点*/ return }
+        // 计算出现的比例
         let progress = (scrollView.contentOffset.y - beginAnimatingOffsetY) / self.bounds.height
-        
+        // 处理状态的改变 -- 和 下拉刷新完全一样
         adjustRefreshViewWithProgress(progress, scrollView: scrollView)
         
     }
     
+    
     private func adjustHeaderWhenScrollViewIsScrolling(scrollView: UIScrollView) {
         if isRefreshing {/**正在刷新直接返回*/
+
+            if self.window == nil {
+                return
+            }
             /// 需要处理这个时候滚动时sectionHeader悬停的问题
             /// 参照MJRefresh
             var insetsTop: CGFloat = 0
-            if scrollView.contentOffset.y > -scrollViewOriginalValue.contentInset.top {
-                insetsTop = scrollViewOriginalValue.contentInset.top
+            if scrollView.contentOffset.y > -scrollViewOriginalValue.contentInsetTop {
+                insetsTop = scrollViewOriginalValue.contentInsetTop
             } else {
                 insetsTop = -scrollView.contentOffset.y
             }
             
-            insetsTop = min(scrollViewOriginalValue.contentInset.top + self.bounds.height, insetsTop)
+            insetsTop = min(scrollViewOriginalValue.contentInsetTop + self.bounds.height, insetsTop)
             scrollView.contentInset.top = insetsTop
+            insetTopDelta = scrollViewOriginalValue.contentInsetTop - insetsTop;
 //            print("--------******   \(scrollView.contentInset.top)")
             return
         }
-        /// 不在刷新状态的时候都随时记录原始的contentInset
         /// 刷新状态的时候不能记录为原始的
         if isAnimating {/**stop动画还未执行完成*/ return }
-        scrollViewOriginalValue.contentInset = scrollView.contentInset
+        /// 不在刷新状态的时候都随时记录原始的contentInset
         
+        scrollViewOriginalValue.contentInsetTop = scrollView.contentInset.top
         if scrollView.panGestureRecognizer.state == .Began {// 手势拖拽才能进入下拉状态
             isGestureBegin = true
+            hidden = false
             return
         }
         
@@ -362,10 +378,10 @@ extension RefreshView {
         
         
         //        print("\(scrollView.contentOffset.y)------*\(-scrollViewOriginalValue.contentInset.top)")
-        if scrollView.contentOffset.y > -scrollViewOriginalValue.contentInset.top {/**头部视图(隐藏)并且还没到显示的临界点*/ return }
+        if scrollView.contentOffset.y > -scrollViewOriginalValue.contentInsetTop {/**头部视图(隐藏)并且还没到显示的临界点*/ return }
         
-        // 已经进入拖拽状态, 进行相关操作
-        let progress = (-scrollViewOriginalValue.contentInset.top - scrollView.contentOffset.y) / self.bounds.height
+        // 已经进入拖拽状态, 刷新控件将出现 进行相关操作
+        let progress = (-scrollViewOriginalValue.contentInsetTop - scrollView.contentOffset.y) / self.bounds.height
         
         adjustRefreshViewWithProgress(progress, scrollView: scrollView)
     }
@@ -403,7 +419,7 @@ extension RefreshView {
     
     /// 显示在屏幕上的内容高度
     private func heightOfContentOnScreenOfScrollView(scrollView: UIScrollView) -> CGFloat {
-        return scrollView.bounds.height - scrollViewOriginalValue.contentInset.top - scrollViewOriginalValue.contentInset.bottom
+        return scrollView.bounds.height - scrollView.contentInset.top - scrollView.contentInset.bottom
     }
     
     

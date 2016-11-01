@@ -204,11 +204,15 @@ extension GifAnimator: RefreshViewDelegate {
         if gifImageView.isAnimating() {
             gifImageView.stopAnimating()
         }
+        // 取出设置的拖拉状态的所有gif图片
         guard let result = imagesDic[.pullToRefresh] where result.images.count != 0 else { return }
-        if result.images.count == 1 {
+        if result.images.count == 1 {// 只有一张就直接设置 不需要动态切换
             gifImageView.image = result.images.first
+            return
         }
+        // 有很多张的时候, 就需要根据当前的progress计算应该展示哪一张
         var index = Int(CGFloat(result.images.count) * progress)
+        // 防止越界
         index = min(index, result.images.count - 1)
         gifImageView.image = result.images[index]
         
